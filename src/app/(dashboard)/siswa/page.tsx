@@ -1,21 +1,7 @@
 import { requireRole } from "@/lib/auth";
-import { FadeIn } from "@/components/shared/motion-wrapper";
+import { SiswaDashboardContent } from "./siswa-dashboard-content";
 
 export default async function SiswaDashboardPage() {
-  const session = await requireRole("siswa");
-
-  return (
-    <div className="space-y-6">
-      <FadeIn>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Selamat Datang, {session.fullName}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Dashboard Siswa — CBT MTsN 3 Kota Tasikmalaya
-          </p>
-        </div>
-      </FadeIn>
-    </div>
-  );
+  await requireRole("siswa");
+  return <SiswaDashboardContent />;
 }
