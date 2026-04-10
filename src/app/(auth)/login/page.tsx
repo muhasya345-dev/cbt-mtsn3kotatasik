@@ -80,9 +80,16 @@ export default function LoginPage() {
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-              className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-600 to-green-600 rounded-2xl flex items-center justify-center shadow-lg"
+              className="mx-auto"
             >
-              <span className="text-white text-2xl font-bold">CBT</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo-kemenag.png"
+                alt="Logo Kementerian Agama"
+                width={80}
+                height={80}
+                className="mx-auto drop-shadow-lg"
+              />
             </motion.div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -90,6 +97,9 @@ export default function LoginPage() {
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Sistem Ujian Berbasis Komputer
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Kementerian Agama Republik Indonesia
               </p>
             </div>
           </CardHeader>

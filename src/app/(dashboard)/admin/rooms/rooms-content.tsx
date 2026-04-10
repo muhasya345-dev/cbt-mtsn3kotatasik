@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FadeIn } from "@/components/shared/motion-wrapper";
 import { toast } from "sonner";
-import { Plus, Trash2, Edit2 } from "lucide-react";
+import { Plus, Trash2, Edit2, Printer } from "lucide-react";
+import { generateRoomLabelPdf } from "@/lib/generate-room-label-pdf";
 
 interface RoomData {
   id: string;
@@ -20,7 +21,12 @@ interface RoomData {
   examEventName: string;
 }
 
-interface SelectOption { id: string; name: string }
+interface ExamEventOption {
+  id: string;
+  name: string;
+  academicYear?: string;
+  semester?: string;
+}
 
 export function RoomsPageContent() {
   const [rooms, setRooms] = useState<RoomData[]>([]);
@@ -28,7 +34,13 @@ export function RoomsPageContent() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<RoomData | null>(null);
   const [form, setForm] = useState({ name: "", capacity: "30", examEventId: "" });
-  const [examEvents, setExamEvents] = useState<SelectOption[]>([]);
+  const [examEvents, setExamEvents] = useState<ExamEventOption[]>([]);
+
+  // Print dialog
+  const [printDialogOpen, setPrintDialogOpen] = useState(false);
+  const [printEventId, setPrintEventId] = useState("");
+  const [printDateRange, setPrintDateRange] = useState("");
+  const [printing, setPrinting] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -42,7 +54,7 @@ export function RoomsPageContent() {
   const fetchOptions = useCallback(async () => {
     try {
       const res = await fetch("/api/exam-events");
-      const data = await res.json() as { events: SelectOption[] };
+      const data = await res.json() as { events: ExamEventOption[] };
       setExamEvents(data.events || []);
     } catch { /* ignore */ }
   }, []);
@@ -87,6 +99,38 @@ export function RoomsPageContent() {
     } catch { toast.error("Gagal menghapus"); }
   }
 
+  function openPrintDialog() {
+    setPrintEventId("");
+    setPrintDateRange("");
+    setPrintDialogOpen(true);
+  }
+
+  async function handlePrint() {
+    const event = examEvents.find((e) => e.id === printEventId);
+    if (!event) { toast.error("Pilih event ujian terlebih dahulu"); return; }
+
+    const eventRooms = rooms.filter((r) => r.examEventId === printEventId);
+    if (eventRooms.length === 0) { toast.error("Tidak ada ruangan untuk event ini"); return; }
+
+    setPrinting(true);
+    try {
+      const labelData = eventRooms.map((r) => ({
+        roomName: r.name,
+        examEventName: event.name,
+        academicYear: event.academicYear || "2025/2026",
+        semester: event.semester || "ganjil",
+        dateRange: printDateRange,
+      }));
+      await generateRoomLabelPdf(labelData);
+      toast.success(`${eventRooms.length} tempelan ruangan berhasil dicetak!`);
+      setPrintDialogOpen(false);
+    } catch (err) {
+      toast.error("Gagal membuat PDF");
+      console.error(err);
+    }
+    setPrinting(false);
+  }
+
   const columns: ColumnDef<RoomData>[] = [
     { accessorKey: "name", header: "Nama Ruangan" },
     { accessorKey: "capacity", header: "Kapasitas", cell: ({ row }) => `${row.original.capacity} siswa` },
@@ -112,21 +156,27 @@ export function RoomsPageContent() {
             <h1 className="text-2xl font-bold">Ruangan Ujian</h1>
             <p className="text-muted-foreground">Kelola ruangan dan kapasitas untuk ujian</p>
           </div>
-          <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
-            <Plus size={16} className="mr-2" /> Tambah Ruangan
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={openPrintDialog} variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 cursor-pointer">
+              <Printer size={16} className="mr-2" /> Cetak Tempelan
+            </Button>
+            <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+              <Plus size={16} className="mr-2" /> Tambah Ruangan
+            </Button>
+          </div>
         </div>
       </FadeIn>
 
       <DataTable columns={columns} data={rooms} searchKey="name" searchPlaceholder="Cari ruangan..." />
 
+      {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader><DialogTitle>{editing ? "Edit Ruangan" : "Tambah Ruangan Baru"}</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label>Nama Ruangan</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Lab Komputer 1" required />
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ruang 1" required />
             </div>
             <div className="space-y-2">
               <Label>Kapasitas</Label>
@@ -145,6 +195,39 @@ export function RoomsPageContent() {
               {editing ? "Perbarui" : "Simpan Ruangan"}
             </Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Print Dialog */}
+      <Dialog open={printDialogOpen} onOpenChange={setPrintDialogOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Cetak Tempelan Ruangan</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Event Ujian</Label>
+              <Select value={printEventId} onValueChange={(v) => setPrintEventId(v ?? "")}>
+                <SelectTrigger><SelectValue placeholder="Pilih event" /></SelectTrigger>
+                <SelectContent>{examEvents.map((e) => <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Rentang Tanggal (tampil di tempelan)</Label>
+              <Input
+                value={printDateRange}
+                onChange={(e) => setPrintDateRange(e.target.value)}
+                placeholder="24 November - 01 Desember 2025"
+              />
+            </div>
+            {printEventId && (
+              <p className="text-sm text-muted-foreground">
+                {rooms.filter((r) => r.examEventId === printEventId).length} ruangan akan dicetak (1 halaman A4 per ruangan)
+              </p>
+            )}
+            <Button onClick={handlePrint} disabled={printing} className="w-full bg-green-600 hover:bg-green-700 cursor-pointer">
+              <Printer size={16} className="mr-2" />
+              {printing ? "Membuat PDF..." : "Download PDF"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
