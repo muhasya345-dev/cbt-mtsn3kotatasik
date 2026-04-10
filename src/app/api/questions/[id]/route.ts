@@ -6,7 +6,7 @@ import { requireRole } from "@/lib/auth";
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await requireRole("guru");
+    const session = await requireRole("admin", "guru");
     const { id } = await params;
     const body = await request.json() as {
       orderNumber?: number;
@@ -19,15 +19,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const db = await getDb();
 
-    // Verify guru owns the question's assignment
     const question = await db.select().from(questions).where(eq(questions.id, id)).limit(1);
     if (!question.length) {
       return NextResponse.json({ error: "Soal tidak ditemukan" }, { status: 404 });
     }
-    const assignment = await db.select().from(teacherAssignments)
-      .where(eq(teacherAssignments.id, question[0].assignmentId)).limit(1);
-    if (!assignment.length || assignment[0].teacherUserId !== session.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Guru only can edit their own, admin can edit all
+    if (session.role === "guru") {
+      const assignment = await db.select().from(teacherAssignments)
+        .where(eq(teacherAssignments.id, question[0].assignmentId)).limit(1);
+      if (!assignment.length || assignment[0].teacherUserId !== session.id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
     }
 
     await db.update(questions).set(body).where(eq(questions.id, id));
@@ -41,19 +43,21 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await requireRole("guru");
+    const session = await requireRole("admin", "guru");
     const { id } = await params;
     const db = await getDb();
 
-    // Verify guru owns the question's assignment
     const question = await db.select().from(questions).where(eq(questions.id, id)).limit(1);
     if (!question.length) {
       return NextResponse.json({ error: "Soal tidak ditemukan" }, { status: 404 });
     }
-    const assignment = await db.select().from(teacherAssignments)
-      .where(eq(teacherAssignments.id, question[0].assignmentId)).limit(1);
-    if (!assignment.length || assignment[0].teacherUserId !== session.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Guru only can delete their own, admin can delete all
+    if (session.role === "guru") {
+      const assignment = await db.select().from(teacherAssignments)
+        .where(eq(teacherAssignments.id, question[0].assignmentId)).limit(1);
+      if (!assignment.length || assignment[0].teacherUserId !== session.id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
     }
 
     await db.delete(questions).where(eq(questions.id, id));

@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const session = await requireRole("guru");
+    const session = await requireRole("admin", "guru");
     const body = await request.json() as {
       assignmentId: string;
       orderNumber: number;
@@ -58,10 +58,13 @@ export async function POST(request: Request) {
 
     const db = await getDb();
 
-    // Verify guru owns this assignment
+    // Verify ownership: admin can access all, guru only their own
     const assignment = await db.select().from(teacherAssignments)
       .where(eq(teacherAssignments.id, body.assignmentId)).limit(1);
-    if (!assignment.length || assignment[0].teacherUserId !== session.id) {
+    if (!assignment.length) {
+      return NextResponse.json({ error: "Penugasan tidak ditemukan" }, { status: 404 });
+    }
+    if (session.role === "guru" && assignment[0].teacherUserId !== session.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

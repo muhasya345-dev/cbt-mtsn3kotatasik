@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FadeIn } from "@/components/shared/motion-wrapper";
 import { toast } from "sonner";
-import { Plus, Trash2, CheckCircle } from "lucide-react";
+import { Plus, Trash2, CheckCircle, PenTool } from "lucide-react";
 
 interface AssignmentData {
   id: string;
@@ -43,6 +44,7 @@ const statusBadge: Record<string, string> = {
 };
 
 export function AssignmentsPageContent() {
+  const router = useRouter();
   const [assignments, setAssignments] = useState<AssignmentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -155,6 +157,9 @@ export function AssignmentsPageContent() {
       id: "actions", header: "Aksi",
       cell: ({ row }) => (
         <div className="flex gap-1">
+          <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => router.push(`/admin/assignments/${row.original.id}/questions`)} title="Kelola Soal">
+            <PenTool size={16} />
+          </Button>
           {row.original.status === "submitted" && (
             <Button size="sm" variant="ghost" className="text-green-600 hover:text-green-700 cursor-pointer" onClick={() => handleApprove(row.original.id)}>
               <CheckCircle size={16} />
