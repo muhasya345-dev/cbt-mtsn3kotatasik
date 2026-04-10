@@ -1,0 +1,12 @@
+export { users } from "./users";
+export { sessions } from "./sessions";
+export { classes } from "./classes";
+export { students } from "./students";
+export { subjects } from "./subjects";
+export { examEvents } from "./exam-events";
+export { rooms, roomAssignments } from "./rooms";
+export { teacherAssignments } from "./teacher-assignments";
+export { questions } from "./questions";
+export { schedules } from "./schedules";
+export { examSessions, answers, violationLogs } from "./answers";
+export { grades } from "./grades";
