@@ -80,7 +80,7 @@ export function AssignmentsPageContent() {
         cRes.json() as Promise<{ classes: SelectOption[] }>,
       ]);
       setExamEvents(evData.events || []);
-      setTeachers((uData.users || []).filter((u) => u.role === "guru").map((u) => ({ id: u.id, name: u.fullName })));
+      setTeachers((uData.users || []).filter((u) => u.role === "guru" || u.role === "admin").map((u) => ({ id: u.id, name: `${u.fullName} (${u.role})` })));
       setSubjects(sData.subjects || []);
       setClasses(cData.classes || []);
     } catch { toast.error("Gagal memuat opsi"); }

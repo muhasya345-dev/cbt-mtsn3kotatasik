@@ -66,7 +66,7 @@ export function SchedulesPageContent() {
       setExamEvents(evData.events || []);
       setSubjects(sData.subjects || []);
       setClasses(cData.classes || []);
-      setProctors((uData.users || []).filter((u) => u.role === "guru").map((u) => ({ id: u.id, name: u.fullName })));
+      setProctors((uData.users || []).filter((u) => u.role === "guru" || u.role === "admin").map((u) => ({ id: u.id, name: u.fullName })));
     } catch { /* ignore */ }
   }, []);
 
