@@ -4,8 +4,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "cbt-mtsn3-db",
-      "database_id": "LOCAL_DB_PLACEHOLDER"
+      "database_name": "cbt-mtsn3kotatasik-db",
+      "database_id": "e8fe5ecb-217b-4b39-9acc-e507a1b2ebc8"
     }
   ]
 }

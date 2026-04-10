@@ -27,7 +27,7 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await res.json();
+      const data = await res.json() as { error?: string; user: { role: string; fullName: string } };
 
       if (!res.ok) {
         toast.error(data.error || "Login gagal");
