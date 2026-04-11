@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/shared/motion-wrapper";
 import { toast } from "sonner";
-import { Clock, BookOpen, KeyRound, CheckCircle2 } from "lucide-react";
+import { Clock, BookOpen, KeyRound, CheckCircle2, Loader2 } from "lucide-react";
 
 interface ScheduleData {
   id: string;
@@ -24,6 +24,8 @@ interface ScheduleData {
   isActive: boolean;
   sessionStatus: string | null;
   sessionId: string | null;
+  essayUngraded: number;
+  totalScore: number | null;
 }
 
 export function SiswaDashboardContent() {
@@ -156,23 +158,43 @@ export function SiswaDashboardContent() {
             </h2>
           </FadeIn>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {completedSchedules.map((s) => (
-              <StaggerItem key={s.id}>
-                <Card className="border-l-4 border-l-green-500 opacity-75">
-                  <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{s.subjectName}</p>
-                        <p className="text-sm text-muted-foreground">{s.examEventName}</p>
+            {completedSchedules.map((s) => {
+              const isPending = s.essayUngraded > 0;
+              return (
+                <StaggerItem key={s.id}>
+                  <Card className={`border-l-4 ${isPending ? "border-l-yellow-500" : "border-l-green-500"}`}>
+                    <CardContent className="py-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">{s.subjectName}</p>
+                          <p className="text-sm text-muted-foreground">{s.examEventName}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          {isPending ? (
+                            <Badge className="bg-yellow-100 text-yellow-800">
+                              <Loader2 size={12} className="mr-1 animate-spin" />
+                              Menunggu Penilaian
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-green-100 text-green-800">
+                              <CheckCircle2 size={12} className="mr-1" />
+                              Selesai
+                            </Badge>
+                          )}
+                          {isPending ? (
+                            <p className="text-xs text-yellow-600">
+                              {s.essayUngraded} soal essay belum dinilai guru
+                            </p>
+                          ) : s.totalScore !== null ? (
+                            <p className="text-lg font-bold text-green-600">{s.totalScore}</p>
+                          ) : null}
+                        </div>
                       </div>
-                      <Badge className="bg-green-100 text-green-800">
-                        {s.sessionStatus === "auto_submitted" ? "Auto Submit" : "Selesai"}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              </StaggerItem>
-            ))}
+                    </CardContent>
+                  </Card>
+                </StaggerItem>
+              );
+            })}
           </StaggerContainer>
         </>
       )}

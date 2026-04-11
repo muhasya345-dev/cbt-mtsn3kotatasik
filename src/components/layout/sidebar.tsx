@@ -41,6 +41,7 @@ const navItems: NavItem[] = [
   { label: "Ruangan Ujian", href: "/rooms", icon: <DoorOpen size={18} />, roles: ["admin"] },
   { label: "Penugasan Soal", href: "/assignments", icon: <FileText size={18} />, roles: ["admin"] },
   { label: "Pembuatan Soal", href: "/questions", icon: <PenTool size={18} />, roles: ["guru"] },
+  { label: "Penilaian Essay", href: "/essay-grading", icon: <FileText size={18} />, roles: ["guru"] },
   { label: "Jadwal CBT", href: "/schedules", icon: <CalendarDays size={18} />, roles: ["admin"] },
   { label: "Monitoring CBT", href: "/monitoring", icon: <Monitor size={18} />, roles: ["admin"] },
   { label: "Ujian CBT", href: "/exam", icon: <Clock size={18} />, roles: ["siswa"] },
