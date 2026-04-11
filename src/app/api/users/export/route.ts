@@ -1,33 +1,30 @@
 import { NextResponse } from "next/server";
+import { ne } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { users } from "@/db/schema";
 import { requireRole } from "@/lib/auth";
 import * as XLSX from "xlsx";
 
-export async function GET(request: Request) {
+// Export admin & guru users only (with password)
+export async function GET() {
   try {
     await requireRole("admin");
-    const { searchParams } = new URL(request.url);
-    const role = searchParams.get("role");
-
     const db = await getDb();
-    let query = db.select({
+
+    const data = await db.select({
       username: users.username,
+      plainPassword: users.plainPassword,
       fullName: users.fullName,
       role: users.role,
       nip: users.nip,
       isActive: users.isActive,
-    }).from(users);
-
-    if (role) {
-      const { eq } = await import("drizzle-orm");
-      query = query.where(eq(users.role, role as "admin" | "guru" | "siswa")) as typeof query;
-    }
-
-    const data = await query.orderBy(users.fullName);
+    }).from(users)
+      .where(ne(users.role, "siswa"))
+      .orderBy(users.fullName);
 
     const exportData = data.map((u) => ({
       "Username": u.username,
+      "Password": u.plainPassword || "",
       "Nama Lengkap": u.fullName,
       "Role": u.role,
       "NIP": u.nip || "",
@@ -37,18 +34,17 @@ export async function GET(request: Request) {
     const workbook = XLSX.utils.book_new();
     const sheet = XLSX.utils.json_to_sheet(exportData);
 
-    // Set column widths
     sheet["!cols"] = [
-      { wch: 20 }, { wch: 35 }, { wch: 10 }, { wch: 20 }, { wch: 10 },
+      { wch: 22 }, { wch: 20 }, { wch: 35 }, { wch: 10 }, { wch: 22 }, { wch: 10 },
     ];
 
-    XLSX.utils.book_append_sheet(workbook, sheet, "Users");
+    XLSX.utils.book_append_sheet(workbook, sheet, "Admin & Guru");
     const buf = XLSX.write(workbook, { type: "buffer", bookType: "xlsx" });
 
     return new NextResponse(buf, {
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename="users-${role || "all"}.xlsx"`,
+        "Content-Disposition": `attachment; filename="users-admin-guru.xlsx"`,
       },
     });
   } catch (error) {

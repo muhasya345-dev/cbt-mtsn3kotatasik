@@ -43,7 +43,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.role) updateData.role = body.role;
     if (body.nip !== undefined) updateData.nip = body.nip;
     if (body.isActive !== undefined) updateData.isActive = body.isActive;
-    if (body.password) updateData.passwordHash = await hashPassword(body.password);
+    if (body.password) {
+      updateData.passwordHash = await hashPassword(body.password);
+      updateData.plainPassword = body.password;
+    }
 
     await db.update(users).set(updateData).where(eq(users.id, id));
     return NextResponse.json({ success: true });

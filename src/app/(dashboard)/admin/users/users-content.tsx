@@ -11,13 +11,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Download, Upload, Pencil, Trash2, UserCheck, UserX } from "lucide-react";
+import { Plus, Download, Upload, Pencil, Trash2, UserCheck, UserX, Eye, EyeOff } from "lucide-react";
 
 interface User {
   id: string;
   username: string;
+  plainPassword: string | null;
   fullName: string;
-  role: "admin" | "guru" | "siswa";
+  role: "admin" | "guru";
   nip: string | null;
   isActive: boolean;
   createdAt: string;
@@ -26,7 +27,6 @@ interface User {
 const roleBadge: Record<string, string> = {
   admin: "bg-blue-100 text-blue-700",
   guru: "bg-green-100 text-green-700",
-  siswa: "bg-orange-100 text-orange-700",
 };
 
 export function UsersPageContent() {
@@ -36,6 +36,7 @@ export function UsersPageContent() {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [form, setForm] = useState({ username: "", password: "", fullName: "", role: "guru" as string, nip: "" });
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -110,13 +111,12 @@ export function UsersPageContent() {
     } catch { toast.error("Gagal mengubah status"); }
   }
 
-  async function handleExport(role?: string) {
-    const url = role ? `/api/users/export?role=${role}` : "/api/users/export";
-    const res = await fetch(url);
+  async function handleExport() {
+    const res = await fetch("/api/users/export");
     const blob = await res.blob();
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `users-${role || "all"}.xlsx`;
+    a.download = "users-admin-guru.xlsx";
     a.click();
     toast.success("File Excel berhasil diunduh!");
   }
@@ -135,15 +135,27 @@ export function UsersPageContent() {
   }
 
   const columns: ColumnDef<User>[] = [
-    { accessorKey: "fullName", header: "Nama Lengkap" },
-    { accessorKey: "username", header: "Username" },
+    { accessorKey: "fullName", header: "Nama Lengkap", cell: ({ row }) => <span className="font-medium">{row.original.fullName}</span> },
+    { accessorKey: "username", header: "Username", cell: ({ row }) => <span className="font-mono">{row.original.username}</span> },
+    {
+      accessorKey: "plainPassword", header: "Password",
+      cell: ({ row }) => {
+        const pwd = row.original.plainPassword;
+        if (!pwd) return <span className="text-gray-400 italic text-xs">tidak tersedia</span>;
+        return (
+          <span className="font-mono text-sm">
+            {showPasswords ? pwd : "••••••••"}
+          </span>
+        );
+      },
+    },
     {
       accessorKey: "role", header: "Role",
       cell: ({ row }) => (
         <Badge className={`${roleBadge[row.original.role]} capitalize`}>{row.original.role}</Badge>
       ),
     },
-    { accessorKey: "nip", header: "NIP", cell: ({ row }) => row.original.nip || "—" },
+    { accessorKey: "nip", header: "NIP", cell: ({ row }) => <span className="font-mono text-gray-600">{row.original.nip || "—"}</span> },
     {
       accessorKey: "isActive", header: "Status",
       cell: ({ row }) => (
@@ -178,10 +190,19 @@ export function UsersPageContent() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Manajemen User</h1>
-            <p className="text-muted-foreground">Kelola akun Admin, Guru, dan Siswa</p>
+            <p className="text-muted-foreground">Kelola akun Admin & Guru</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => handleExport()} className="cursor-pointer">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPasswords(!showPasswords)}
+              className="cursor-pointer"
+            >
+              {showPasswords ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
+              {showPasswords ? "Sembunyikan" : "Tampilkan"} Password
+            </Button>
+            <Button variant="outline" onClick={handleExport} className="cursor-pointer">
               <Download size={16} className="mr-2" /> Export Excel
             </Button>
             <Button variant="outline" onClick={() => setImportDialogOpen(true)} className="cursor-pointer">
@@ -208,12 +229,12 @@ export function UsersPageContent() {
               <Input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
             </div>
             <div className="space-y-2">
-              <Label>Username / NIP / NIS</Label>
+              <Label>Username / NIP</Label>
               <Input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required />
             </div>
             <div className="space-y-2">
               <Label>{editingUser ? "Password (kosongkan jika tidak diubah)" : "Password"}</Label>
-              <Input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={!editingUser} />
+              <Input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required={!editingUser} />
             </div>
             <div className="space-y-2">
               <Label>Role</Label>
@@ -222,16 +243,13 @@ export function UsersPageContent() {
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="guru">Guru</SelectItem>
-                  <SelectItem value="siswa">Siswa</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {(form.role === "guru" || form.role === "admin") && (
-              <div className="space-y-2">
-                <Label>NIP</Label>
-                <Input value={form.nip} onChange={(e) => setForm({ ...form, nip: e.target.value })} />
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label>NIP</Label>
+              <Input value={form.nip} onChange={(e) => setForm({ ...form, nip: e.target.value })} />
+            </div>
             <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
               {editingUser ? "Simpan Perubahan" : "Tambah User"}
             </Button>
@@ -243,7 +261,7 @@ export function UsersPageContent() {
       <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Import User dari Excel</DialogTitle>
+            <DialogTitle>Import Admin/Guru dari Excel</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleImport} className="space-y-4">
             <div className="space-y-2">
@@ -253,7 +271,6 @@ export function UsersPageContent() {
                 <SelectContent>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="guru">Guru</SelectItem>
-                  <SelectItem value="siswa">Siswa</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -261,7 +278,7 @@ export function UsersPageContent() {
               <Label>File Excel (.xlsx)</Label>
               <Input type="file" name="file" accept=".xlsx,.xls" required />
               <p className="text-xs text-muted-foreground">
-                Kolom: Username/NIP/NIS, Nama Lengkap/Nama, Password (opsional)
+                Kolom: Username/NIP, Nama Lengkap, Password
               </p>
             </div>
             <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">

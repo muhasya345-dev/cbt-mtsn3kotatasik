@@ -4,6 +4,7 @@ export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   username: text("username").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  plainPassword: text("plain_password"), // stored for admin to view & export
   role: text("role", { enum: ["admin", "guru", "siswa"] }).notNull(),
   fullName: text("full_name").notNull(),
   nip: text("nip"),
