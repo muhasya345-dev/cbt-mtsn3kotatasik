@@ -97,7 +97,7 @@ export function SubjectsPageContent() {
             <h1 className="text-2xl font-bold text-gray-900">Mata Pelajaran</h1>
             <p className="text-muted-foreground">Kelola daftar mata pelajaran</p>
           </div>
-          <Button onClick={openCreate} className="bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+          <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
             <Plus size={16} className="mr-2" /> Tambah Mapel
           </Button>
         </div>
@@ -117,7 +117,7 @@ export function SubjectsPageContent() {
               <Label>Nama Mata Pelajaran</Label>
               <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="Matematika" />
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editing ? "Simpan Perubahan" : "Tambah Mapel"}
             </Button>
           </form>

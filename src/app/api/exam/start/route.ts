@@ -69,7 +69,7 @@ export async function POST(request: Request) {
       timeRemaining: schedule[0].durationMinutes * 60,
     });
 
-    // Pre-create empty answer records for all questions in this assignment
+    // Find assignment and pre-create answer records using BATCH INSERT
     const assignment = await db.select().from(teacherAssignments)
       .where(and(
         eq(teacherAssignments.subjectId, schedule[0].subjectId),
@@ -81,13 +81,16 @@ export async function POST(request: Request) {
         .where(eq(questions.assignmentId, assignment[0].id))
         .orderBy(questions.orderNumber);
 
-      for (const q of questionList) {
-        await db.insert(answers).values({
-          id: createId(),
-          examSessionId: sessionId,
-          questionId: q.id,
-          answerContent: null,
-        });
+      // BATCH INSERT — 1 query instead of N separate inserts
+      if (questionList.length > 0) {
+        await db.insert(answers).values(
+          questionList.map((q) => ({
+            id: createId(),
+            examSessionId: sessionId,
+            questionId: q.id,
+            answerContent: null,
+          }))
+        );
       }
     }
 

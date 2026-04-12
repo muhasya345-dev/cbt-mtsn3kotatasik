@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { examSessions, answers, questions } from "@/db/schema";
 import { requireRole } from "@/lib/auth";
@@ -28,31 +28,77 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Ujian sudah selesai" }, { status: 400 });
     }
 
-    // Auto-grade MC and T/F questions
-    const answerRows = await db.select().from(answers)
+    // Single JOIN query — get answers WITH question data (replaces N+1 loop)
+    const answerRows = await db
+      .select({
+        answerId: answers.id,
+        answerContent: answers.answerContent,
+        questionType: questions.type,
+        correctAnswer: questions.correctAnswer,
+        points: questions.points,
+      })
+      .from(answers)
+      .innerJoin(questions, eq(answers.questionId, questions.id))
       .where(eq(answers.examSessionId, body.sessionId));
 
-    for (const ans of answerRows) {
-      const q = await db.select().from(questions)
-        .where(eq(questions.id, ans.questionId)).limit(1);
-      if (!q.length) continue;
+    // Batch auto-grade MC and T/F
+    const correctIds: string[] = [];
+    const wrongIds: string[] = [];
+    const scoreMap: Record<string, number> = {};
 
-      if (q[0].type === "multiple_choice" || q[0].type === "true_false") {
-        const isCorrect = ans.answerContent === q[0].correctAnswer;
-        await db.update(answers).set({
-          isCorrect,
-          score: isCorrect ? q[0].points : 0,
-        }).where(eq(answers.id, ans.id));
+    for (const ans of answerRows) {
+      if (ans.questionType === "multiple_choice" || ans.questionType === "true_false") {
+        const isCorrect = ans.answerContent === ans.correctAnswer;
+        if (isCorrect) {
+          correctIds.push(ans.answerId);
+          scoreMap[ans.answerId] = ans.points;
+        } else {
+          wrongIds.push(ans.answerId);
+        }
       }
-      // Essay questions are graded manually by teacher/admin
+    }
+
+    // Batch update correct answers (score = points)
+    // Group by same score to minimize queries
+    const scoreGroups: Record<number, string[]> = {};
+    for (const id of correctIds) {
+      const score = scoreMap[id];
+      if (!scoreGroups[score]) scoreGroups[score] = [];
+      scoreGroups[score].push(id);
+    }
+
+    const updatePromises: Promise<unknown>[] = [];
+
+    for (const [score, ids] of Object.entries(scoreGroups)) {
+      updatePromises.push(
+        db.update(answers).set({
+          isCorrect: true,
+          score: Number(score),
+        }).where(inArray(answers.id, ids))
+      );
+    }
+
+    // Batch update wrong answers (score = 0)
+    if (wrongIds.length > 0) {
+      updatePromises.push(
+        db.update(answers).set({
+          isCorrect: false,
+          score: 0,
+        }).where(inArray(answers.id, wrongIds))
+      );
     }
 
     // Update session status
-    await db.update(examSessions).set({
-      status: body.auto ? "auto_submitted" : "submitted",
-      submittedAt: new Date(),
-      timeRemaining: 0,
-    }).where(eq(examSessions.id, body.sessionId));
+    updatePromises.push(
+      db.update(examSessions).set({
+        status: body.auto ? "auto_submitted" : "submitted",
+        submittedAt: new Date(),
+        timeRemaining: 0,
+      }).where(eq(examSessions.id, body.sessionId))
+    );
+
+    // Execute all updates in parallel
+    await Promise.all(updatePromises);
 
     return NextResponse.json({ success: true, status: body.auto ? "auto_submitted" : "submitted" });
   } catch (error) {

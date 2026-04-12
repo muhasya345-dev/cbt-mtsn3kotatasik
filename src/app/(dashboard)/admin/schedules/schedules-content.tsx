@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FadeIn } from "@/components/shared/motion-wrapper";
 import { toast } from "sonner";
-import { Plus, Trash2, Power, Copy } from "lucide-react";
+import { Plus, Trash2, Power, Copy, RefreshCw } from "lucide-react";
 
 interface ScheduleData {
   id: string;
@@ -30,6 +30,8 @@ interface ScheduleData {
 
 interface SelectOption { id: string; name: string; code?: string; fullName?: string }
 
+const TOKEN_REGENERATE_INTERVAL = 20 * 60 * 1000; // 20 menit
+
 export function SchedulesPageContent() {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +44,10 @@ export function SchedulesPageContent() {
   const [subjects, setSubjects] = useState<SelectOption[]>([]);
   const [classes, setClasses] = useState<SelectOption[]>([]);
   const [proctors, setProctors] = useState<SelectOption[]>([]);
+  const [nextRegenTime, setNextRegenTime] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState("");
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -69,6 +75,71 @@ export function SchedulesPageContent() {
       setProctors((uData.users || []).filter((u) => u.role === "guru" || u.role === "admin").map((u) => ({ id: u.id, name: u.fullName })));
     } catch { /* ignore */ }
   }, []);
+
+  // Regenerate tokens for all active schedules
+  const regenerateActiveTokens = useCallback(async () => {
+    const activeSchedules = schedules.filter((s) => s.isActive);
+    if (activeSchedules.length === 0) return;
+
+    let regenerated = 0;
+    for (const schedule of activeSchedules) {
+      try {
+        const res = await fetch("/api/schedules/regenerate-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ scheduleId: schedule.id }),
+        });
+        if (res.ok) regenerated++;
+      } catch { /* ignore individual failures */ }
+    }
+
+    if (regenerated > 0) {
+      toast.info(`Token diperbarui untuk ${regenerated} jadwal aktif`, { duration: 5000 });
+      fetchData();
+      setNextRegenTime(Date.now() + TOKEN_REGENERATE_INTERVAL);
+    }
+  }, [schedules, fetchData]);
+
+  // Auto-regenerate tokens every 20 minutes for active schedules
+  useEffect(() => {
+    const hasActive = schedules.some((s) => s.isActive);
+
+    if (hasActive) {
+      // Set initial next regen time if not set
+      if (!nextRegenTime) {
+        setNextRegenTime(Date.now() + TOKEN_REGENERATE_INTERVAL);
+      }
+
+      intervalRef.current = setInterval(() => {
+        regenerateActiveTokens();
+      }, TOKEN_REGENERATE_INTERVAL);
+    } else {
+      setNextRegenTime(null);
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [schedules, regenerateActiveTokens, nextRegenTime]);
+
+  // Countdown timer display
+  useEffect(() => {
+    if (!nextRegenTime) {
+      setCountdown("");
+      return;
+    }
+
+    countdownRef.current = setInterval(() => {
+      const remaining = Math.max(0, nextRegenTime - Date.now());
+      const min = Math.floor(remaining / 60000);
+      const sec = Math.floor((remaining % 60000) / 1000);
+      setCountdown(`${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`);
+    }, 1000);
+
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, [nextRegenTime]);
 
   useEffect(() => { fetchData(); fetchOptions(); }, [fetchData, fetchOptions]);
 
@@ -118,6 +189,22 @@ export function SchedulesPageContent() {
     toast.success(`Token ${token} disalin!`);
   }
 
+  async function handleManualRegenerate(scheduleId: string) {
+    try {
+      const res = await fetch("/api/schedules/regenerate-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scheduleId }),
+      });
+      if (!res.ok) throw new Error("Gagal");
+      const data = await res.json() as { token: string };
+      toast.success(`Token baru: ${data.token}`);
+      fetchData();
+    } catch { toast.error("Gagal regenerate token"); }
+  }
+
+  const activeCount = schedules.filter((s) => s.isActive).length;
+
   const columns: ColumnDef<ScheduleData>[] = [
     { accessorKey: "date", header: "Tanggal", cell: ({ row }) => new Date(row.original.date).toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) },
     { accessorKey: "subjectName", header: "Mapel", cell: ({ row }) => <span>{row.original.subjectName} <span className="text-xs text-muted-foreground">({row.original.subjectCode})</span></span> },
@@ -132,6 +219,11 @@ export function SchedulesPageContent() {
           <Button size="sm" variant="ghost" className="h-6 w-6 p-0 cursor-pointer" onClick={() => copyToken(row.original.token!)}>
             <Copy size={12} />
           </Button>
+          {row.original.isActive && (
+            <Button size="sm" variant="ghost" className="h-6 w-6 p-0 cursor-pointer text-blue-600" onClick={() => handleManualRegenerate(row.original.id)} title="Generate token baru">
+              <RefreshCw size={12} />
+            </Button>
+          )}
         </div>
       ) : "-",
     },
@@ -164,16 +256,33 @@ export function SchedulesPageContent() {
   return (
     <div className="space-y-6">
       <FadeIn>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold">Jadwal CBT</h1>
             <p className="text-muted-foreground">Atur jadwal ujian, durasi, dan token akses</p>
           </div>
-          <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+          <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
             <Plus size={16} className="mr-2" /> Tambah Jadwal
           </Button>
         </div>
       </FadeIn>
+
+      {/* Token auto-regenerate info banner */}
+      {activeCount > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+          <div className="flex items-center gap-2">
+            <RefreshCw size={16} className="text-blue-600 animate-spin" style={{ animationDuration: "3s" }} />
+            <span className="text-sm text-blue-800">
+              <strong>{activeCount}</strong> jadwal aktif — token otomatis diperbarui setiap 20 menit
+            </span>
+          </div>
+          {countdown && (
+            <Badge className="bg-blue-100 text-blue-700 sm:ml-auto">
+              Regenerasi berikutnya: {countdown}
+            </Badge>
+          )}
+        </div>
+      )}
 
       <DataTable columns={columns} data={schedules} searchKey="subjectName" searchPlaceholder="Cari mapel..." />
 
@@ -225,7 +334,7 @@ export function SchedulesPageContent() {
                 <SelectContent>{proctors.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">Simpan Jadwal</Button>
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">Simpan Jadwal</Button>
           </form>
         </DialogContent>
       </Dialog>

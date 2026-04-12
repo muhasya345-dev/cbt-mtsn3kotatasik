@@ -113,7 +113,7 @@ export function ClassesPageContent() {
             <h1 className="text-2xl font-bold text-gray-900">Data Kelas</h1>
             <p className="text-muted-foreground">Kelola kelas 7, 8, dan 9</p>
           </div>
-          <Button onClick={openCreate} className="bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+          <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
             <Plus size={16} className="mr-2" /> Tambah Kelas
           </Button>
         </div>
@@ -144,7 +144,7 @@ export function ClassesPageContent() {
               <Label>Tahun Ajaran</Label>
               <Input value={form.academicYear} onChange={(e) => setForm({ ...form, academicYear: e.target.value })} required placeholder="2025/2026" />
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editing ? "Simpan Perubahan" : "Tambah Kelas"}
             </Button>
           </form>

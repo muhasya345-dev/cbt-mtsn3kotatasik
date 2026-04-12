@@ -6,7 +6,42 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
-const Select = SelectPrimitive.Root
+// Context to collect item value→label mappings for display in trigger
+const ItemsRegistryContext = React.createContext<{
+  register: (value: string, label: string) => void
+  unregister: (value: string) => void
+} | null>(null)
+
+function Select({ children, ...props }: SelectPrimitive.Root.Props<any, any>) {
+  const [itemsMap, setItemsMap] = React.useState<Record<string, React.ReactNode>>({})
+
+  const registry = React.useMemo(() => ({
+    register: (value: string, label: string) => {
+      setItemsMap(prev => {
+        if (prev[value] === label) return prev
+        return { ...prev, [value]: label }
+      })
+    },
+    unregister: (value: string) => {
+      setItemsMap(prev => {
+        if (!(value in prev)) return prev
+        const next = { ...prev }
+        delete next[value]
+        return next
+      })
+    },
+  }), [])
+
+  const hasItems = Object.keys(itemsMap).length > 0
+
+  return (
+    <ItemsRegistryContext.Provider value={registry}>
+      <SelectPrimitive.Root {...props} items={hasItems ? itemsMap : props.items}>
+        {children}
+      </SelectPrimitive.Root>
+    </ItemsRegistryContext.Provider>
+  )
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
@@ -111,8 +146,19 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  label,
   ...props
-}: SelectPrimitive.Item.Props) {
+}: SelectPrimitive.Item.Props & { label?: string }) {
+  const registry = React.useContext(ItemsRegistryContext)
+  const itemLabel = label ?? (typeof children === "string" ? children : undefined)
+  const itemValue = props.value != null ? String(props.value) : undefined
+
+  React.useEffect(() => {
+    if (registry && itemValue != null && itemLabel != null) {
+      registry.register(itemValue, itemLabel)
+    }
+  }, [registry, itemValue, itemLabel])
+
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -120,6 +166,7 @@ function SelectItem({
         "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className
       )}
+      label={itemLabel}
       {...props}
     >
       <SelectPrimitive.ItemText className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">

@@ -291,7 +291,7 @@ export function StudentsPageContent() {
           <Button variant="outline" size="sm" onClick={() => setImportDialogOpen(true)} className="cursor-pointer">
             <Upload size={14} className="mr-1" /> Import dari Excel
           </Button>
-          <Button size="sm" onClick={openCreate} className="bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+          <Button size="sm" onClick={openCreate} className="btn-theme-gradient cursor-pointer">
             <Plus size={14} className="mr-1" /> Tambah Siswa
           </Button>
         </div>
@@ -360,7 +360,7 @@ export function StudentsPageContent() {
                 Username (12 karakter) dan Password (8 karakter) akan otomatis di-generate oleh sistem.
               </p>
             )}
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editingStudent ? "Simpan Perubahan" : "Tambah Siswa"}
             </Button>
           </form>
@@ -391,7 +391,7 @@ export function StudentsPageContent() {
                 <FileSpreadsheet size={14} className="mr-1" /> Download Template
               </Button>
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               <Upload size={14} className="mr-2" /> Import Siswa
             </Button>
           </form>

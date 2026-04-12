@@ -208,7 +208,7 @@ export function UsersPageContent() {
             <Button variant="outline" onClick={() => setImportDialogOpen(true)} className="cursor-pointer">
               <Upload size={16} className="mr-2" /> Import Excel
             </Button>
-            <Button onClick={openCreate} className="bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
               <Plus size={16} className="mr-2" /> Tambah User
             </Button>
           </div>
@@ -250,7 +250,7 @@ export function UsersPageContent() {
               <Label>NIP</Label>
               <Input value={form.nip} onChange={(e) => setForm({ ...form, nip: e.target.value })} />
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editingUser ? "Simpan Perubahan" : "Tambah User"}
             </Button>
           </form>
@@ -281,7 +281,7 @@ export function UsersPageContent() {
                 Kolom: Username/NIP, Nama Lengkap, Password
               </p>
             </div>
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               <Upload size={16} className="mr-2" /> Import
             </Button>
           </form>

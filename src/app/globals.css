@@ -49,6 +49,14 @@
 }
 
 :root {
+  /* Theme color defaults (blue) - overridden by ThemeProvider */
+  --theme-primary: 59 130 246;
+  --theme-primary-light: 239 246 255;
+  --theme-primary-text: 29 78 216;
+  --theme-primary-dark: 30 64 175;
+  --theme-gradient-from: 37 99 235;
+  --theme-gradient-to: 22 163 74;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -127,4 +135,13 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Themed gradient button */
+.btn-theme-gradient {
+  background: linear-gradient(to right, rgb(var(--theme-gradient-from)), rgb(var(--theme-gradient-to)));
+  color: white;
+}
+.btn-theme-gradient:hover {
+  filter: brightness(0.9);
 }

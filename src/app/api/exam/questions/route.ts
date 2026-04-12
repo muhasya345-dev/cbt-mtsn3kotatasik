@@ -27,30 +27,22 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Ujian sudah selesai" }, { status: 400 });
     }
 
-    // Get answers with question data
-    const answerRows = await db.select().from(answers)
-      .where(eq(answers.examSessionId, sessionId));
-
-    const result = [];
-    for (const ans of answerRows) {
-      const q = await db.select().from(questions)
-        .where(eq(questions.id, ans.questionId)).limit(1);
-      if (q.length) {
-        result.push({
-          answerId: ans.id,
-          questionId: q[0].id,
-          orderNumber: q[0].orderNumber,
-          type: q[0].type,
-          content: q[0].content,
-          options: q[0].options,
-          points: q[0].points,
-          answerContent: ans.answerContent,
-        });
-      }
-    }
-
-    // Sort by orderNumber
-    result.sort((a, b) => a.orderNumber - b.orderNumber);
+    // Single JOIN query — replaces N+1 loop (50 queries → 1 query)
+    const result = await db
+      .select({
+        answerId: answers.id,
+        questionId: questions.id,
+        orderNumber: questions.orderNumber,
+        type: questions.type,
+        content: questions.content,
+        options: questions.options,
+        points: questions.points,
+        answerContent: answers.answerContent,
+      })
+      .from(answers)
+      .innerJoin(questions, eq(answers.questionId, questions.id))
+      .where(eq(answers.examSessionId, sessionId))
+      .orderBy(questions.orderNumber);
 
     return NextResponse.json({
       questions: result,

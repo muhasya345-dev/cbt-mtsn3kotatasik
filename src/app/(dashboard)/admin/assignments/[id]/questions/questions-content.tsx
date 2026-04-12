@@ -128,7 +128,7 @@ export function AdminQuestionsContent({ assignmentId }: { assignmentId: string }
               <p className="text-muted-foreground">{questions.length} soal dalam penugasan ini</p>
             </div>
           </div>
-          <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+          <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
             <Plus size={16} className="mr-2" /> Tambah Soal
           </Button>
         </div>
@@ -241,7 +241,7 @@ export function AdminQuestionsContent({ assignmentId }: { assignmentId: string }
                 </Select>
               </div>
             )}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editing ? "Perbarui Soal" : "Simpan Soal"}
             </Button>
           </form>

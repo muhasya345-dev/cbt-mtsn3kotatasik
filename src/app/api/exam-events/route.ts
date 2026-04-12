@@ -10,7 +10,7 @@ export async function GET() {
     await requireRole("admin");
     const db = await getDb();
     const all = await db.select().from(examEvents).orderBy(examEvents.createdAt);
-    return NextResponse.json({ examEvents: all });
+    return NextResponse.json({ events: all });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Server error";
     const status = message === "Unauthorized" ? 401 : message === "Forbidden" ? 403 : 500;

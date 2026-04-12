@@ -137,7 +137,7 @@ export function SiswaDashboardContent() {
                         openTokenDialog(s);
                       }
                     }}
-                    className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                    className="w-full btn-theme-gradient cursor-pointer"
                   >
                     <KeyRound size={16} className="mr-2" />
                     {s.sessionStatus === "in_progress" ? "Lanjutkan Ujian" : "Masukkan Token"}
@@ -224,7 +224,7 @@ export function SiswaDashboardContent() {
             <Button
               onClick={handleStartExam}
               disabled={starting || token.length < 6}
-              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
+              className="w-full btn-theme-gradient cursor-pointer"
             >
               {starting ? "Memulai..." : "Mulai Ujian"}
             </Button>

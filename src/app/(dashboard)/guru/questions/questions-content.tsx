@@ -241,7 +241,7 @@ export function QuestionsPageContent() {
           <div className="flex gap-2">
             {canEdit && (
               <>
-                <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+                <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
                   <Plus size={16} className="mr-2" /> Tambah Soal
                 </Button>
                 <Button onClick={handleSubmitAssignment} variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 cursor-pointer">
@@ -384,7 +384,7 @@ export function QuestionsPageContent() {
               </div>
             )}
 
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editing ? "Perbarui Soal" : "Simpan Soal"}
             </Button>
           </form>

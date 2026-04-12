@@ -151,7 +151,7 @@ export default function LoginPage() {
               >
                 <Button
                   type="submit"
-                  className="w-full h-11 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold shadow-md cursor-pointer"
+                  className="w-full h-11 btn-theme-gradient font-semibold shadow-md cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? (

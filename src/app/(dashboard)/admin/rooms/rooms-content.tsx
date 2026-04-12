@@ -160,7 +160,7 @@ export function RoomsPageContent() {
             <Button onClick={openPrintDialog} variant="outline" className="border-green-600 text-green-600 hover:bg-green-50 cursor-pointer">
               <Printer size={16} className="mr-2" /> Cetak Tempelan
             </Button>
-            <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+            <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
               <Plus size={16} className="mr-2" /> Tambah Ruangan
             </Button>
           </div>
@@ -191,7 +191,7 @@ export function RoomsPageContent() {
                 </Select>
               </div>
             )}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">
               {editing ? "Perbarui" : "Simpan Ruangan"}
             </Button>
           </form>

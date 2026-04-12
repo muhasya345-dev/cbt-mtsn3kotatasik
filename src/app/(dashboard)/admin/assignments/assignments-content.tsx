@@ -183,7 +183,7 @@ export function AssignmentsPageContent() {
             <h1 className="text-2xl font-bold">Penugasan Soal</h1>
             <p className="text-muted-foreground">Tugaskan guru untuk membuat soal per mata pelajaran dan kelas</p>
           </div>
-          <Button onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
+          <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">
             <Plus size={16} className="mr-2" /> Tambah Penugasan
           </Button>
         </div>
@@ -239,7 +239,7 @@ export function AssignmentsPageContent() {
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">Simpan Penugasan</Button>
+            <Button type="submit" className="w-full btn-theme-gradient cursor-pointer">Simpan Penugasan</Button>
           </form>
         </DialogContent>
       </Dialog>
