@@ -136,7 +136,7 @@ export function EssayGradingContent() {
       <FadeIn>
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Penilaian Essay</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Penilaian Essay</h1>
             <p className="text-sm text-gray-500 mt-1">Nilai jawaban essay siswa dari penugasan soal Anda</p>
           </div>
 
@@ -229,7 +229,7 @@ export function EssayGradingContent() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
               {selectedGroup.subjectName} — {selectedGroup.className}
             </h1>
             <p className="text-sm text-gray-500">

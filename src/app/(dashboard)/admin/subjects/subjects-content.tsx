@@ -94,7 +94,7 @@ export function SubjectsPageContent() {
       <FadeIn>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Mata Pelajaran</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Mata Pelajaran</h1>
             <p className="text-muted-foreground">Kelola daftar mata pelajaran</p>
           </div>
           <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">

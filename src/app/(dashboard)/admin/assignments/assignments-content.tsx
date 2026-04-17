@@ -180,7 +180,7 @@ export function AssignmentsPageContent() {
       <FadeIn>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Penugasan Soal</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Penugasan Soal</h1>
             <p className="text-muted-foreground">Tugaskan guru untuk membuat soal per mata pelajaran dan kelas</p>
           </div>
           <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">

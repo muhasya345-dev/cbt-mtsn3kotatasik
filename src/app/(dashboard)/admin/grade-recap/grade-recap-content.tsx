@@ -110,7 +110,7 @@ export function GradeRecapContent() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Rekap Nilai</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Rekap Nilai</h1>
             <p className="text-sm text-gray-500 mt-1">Lihat hasil nilai ujian siswa per event/mapel/kelas</p>
           </div>
           {recapData.length > 0 && (

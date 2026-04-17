@@ -124,7 +124,7 @@ export function ExamEventsPageContent() {
       <FadeIn>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Event Ujian</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Event Ujian</h1>
             <p className="text-muted-foreground">Atur event ujian (PTS, PAS, dll)</p>
           </div>
           <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">

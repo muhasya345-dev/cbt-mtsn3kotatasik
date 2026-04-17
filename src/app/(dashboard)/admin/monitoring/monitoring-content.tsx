@@ -155,7 +155,7 @@ export function MonitoringPageContent() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Monitoring CBT</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Monitoring CBT</h1>
               <p className="text-sm text-gray-500 mt-1">Pantau ujian yang sedang berlangsung secara real-time</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => { setLoading(true); fetchSchedules(); }}>
@@ -256,7 +256,7 @@ export function MonitoringPageContent() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
                 {selectedSchedule.subjectName} — {selectedSchedule.className}
               </h1>
               <p className="text-sm text-gray-500">

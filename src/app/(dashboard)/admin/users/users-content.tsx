@@ -189,7 +189,7 @@ export function UsersPageContent() {
       <FadeIn>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Manajemen User</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Manajemen User</h1>
             <p className="text-muted-foreground">Kelola akun Admin & Guru</p>
           </div>
           <div className="flex gap-2">

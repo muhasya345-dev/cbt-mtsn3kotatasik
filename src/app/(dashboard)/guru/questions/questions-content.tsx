@@ -181,7 +181,7 @@ export function QuestionsPageContent() {
     return (
       <div className="space-y-6">
         <FadeIn>
-          <h1 className="text-2xl font-bold">Pembuatan Soal</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Pembuatan Soal</h1>
           <p className="text-muted-foreground">Pilih penugasan untuk mulai membuat soal</p>
         </FadeIn>
 
@@ -234,7 +234,7 @@ export function QuestionsPageContent() {
               <ChevronLeft size={16} />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold">{selectedAssignment.subjectName} — {selectedAssignment.className}</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">{selectedAssignment.subjectName} — {selectedAssignment.className}</h1>
               <p className="text-muted-foreground">{selectedAssignment.examEventName} · <Badge className={statusBadge[selectedAssignment.status]}>{selectedAssignment.status}</Badge></p>
             </div>
           </div>

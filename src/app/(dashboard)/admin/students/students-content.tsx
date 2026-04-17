@@ -258,7 +258,7 @@ export function StudentsPageContent() {
               <GraduationCap className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Data Siswa</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Data Siswa</h1>
               <p className="text-sm text-gray-500">
                 Total {filteredStudents.length} siswa — Username & password otomatis dibuat oleh sistem
               </p>

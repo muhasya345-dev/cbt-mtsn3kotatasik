@@ -114,7 +114,7 @@ export function ExamCardsContent() {
     <FadeIn>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Kartu Ujian</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Kartu Ujian</h1>
           <p className="text-sm text-gray-500 mt-1">Cetak kartu ujian siswa berdasarkan penempatan ruangan (8 kartu per halaman A4)</p>
         </div>
 

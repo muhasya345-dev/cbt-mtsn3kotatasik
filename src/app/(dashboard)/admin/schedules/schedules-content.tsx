@@ -258,7 +258,7 @@ export function SchedulesPageContent() {
       <FadeIn>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Jadwal CBT</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Jadwal CBT</h1>
             <p className="text-muted-foreground">Atur jadwal ujian, durasi, dan token akses</p>
           </div>
           <Button onClick={openCreate} className="btn-theme-gradient cursor-pointer">

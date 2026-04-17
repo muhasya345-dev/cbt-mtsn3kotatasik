@@ -124,7 +124,7 @@ export function AdminQuestionsContent({ assignmentId }: { assignmentId: string }
               <ChevronLeft size={16} />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold">Kelola Soal</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Kelola Soal</h1>
               <p className="text-muted-foreground">{questions.length} soal dalam penugasan ini</p>
             </div>
           </div>

@@ -91,7 +91,7 @@ export function SiswaDashboardContent() {
   return (
     <div className="space-y-6">
       <FadeIn>
-        <h1 className="text-2xl font-bold">Dashboard Siswa</h1>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">Dashboard Siswa</h1>
         <p className="text-muted-foreground">CBT MTsN 3 Kota Tasikmalaya</p>
       </FadeIn>
 
