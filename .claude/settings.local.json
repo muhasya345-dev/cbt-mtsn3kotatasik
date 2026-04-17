@@ -24,7 +24,11 @@
       "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/admin/grade-recap.html)",
       "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/exam-events)",
       "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/subjects)",
-      "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/classes)"
+      "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/classes)",
+      "Bash(curl -sI https://cbt-mtsn3kotatasik.pages.dev/favicon.svg)",
+      "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/favicon.svg)",
+      "Bash(rm -f src/app/icon.svg)",
+      "Bash(rm -rf .next out)"
     ]
   }
 }
