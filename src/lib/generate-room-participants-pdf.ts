@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export interface RoomParticipant {
+  participantNumber?: string;
   nis: string;
   nisn: string;
   fullName: string;
@@ -113,13 +114,12 @@ export async function generateRoomParticipantsPdf(data: RoomParticipantsPdfInput
     y += 6;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    const semesterLabel = data.semester === "ganjil" ? "Ganjil" : "Genap";
-    doc.text(
-      `Tahun Pelajaran ${data.academicYear} — Semester ${semesterLabel}`,
-      pageW / 2,
-      y,
-      { align: "center" },
-    );
+    const showSemester = data.semester && data.semester !== "none";
+    const semesterLabel = data.semester === "ganjil" ? "Ganjil" : data.semester === "genap" ? "Genap" : "";
+    const subtitle = showSemester
+      ? `Tahun Pelajaran ${data.academicYear} — Semester ${semesterLabel}`
+      : `Tahun Pelajaran ${data.academicYear}`;
+    doc.text(subtitle, pageW / 2, y, { align: "center" });
 
     // Ruang (left aligned)
     y += 8;
@@ -140,6 +140,7 @@ export async function generateRoomParticipantsPdf(data: RoomParticipantsPdfInput
     const tableStartY = y + 4;
     const rows = room.participants.map((p, idx) => [
       String(idx + 1),
+      p.participantNumber || "-",
       p.nis,
       p.nisn || "-",
       p.fullName,
@@ -148,13 +149,13 @@ export async function generateRoomParticipantsPdf(data: RoomParticipantsPdfInput
 
     autoTable(doc, {
       startY: tableStartY,
-      head: [["No.", "NIS", "NISN", "Nama Lengkap", "Kelas"]],
+      head: [["No.", "No. Peserta", "NIS", "NISN", "Nama Lengkap", "Kelas"]],
       body: rows,
       theme: "grid",
       styles: {
         font: "helvetica",
-        fontSize: 10,
-        cellPadding: 2,
+        fontSize: 9.5,
+        cellPadding: 1.8,
         lineColor: [80, 80, 80],
         lineWidth: 0.2,
         textColor: [30, 30, 30],
@@ -166,11 +167,12 @@ export async function generateRoomParticipantsPdf(data: RoomParticipantsPdfInput
         halign: "center",
       },
       columnStyles: {
-        0: { halign: "center", cellWidth: 12 },
-        1: { halign: "center", cellWidth: 28 },
-        2: { halign: "center", cellWidth: 28 },
-        3: { halign: "left" },
-        4: { halign: "center", cellWidth: 22 },
+        0: { halign: "center", cellWidth: 10 },
+        1: { halign: "center", cellWidth: 30, fontStyle: "bold" },
+        2: { halign: "center", cellWidth: 22 },
+        3: { halign: "center", cellWidth: 22 },
+        4: { halign: "left" },
+        5: { halign: "center", cellWidth: 16 },
       },
       alternateRowStyles: { fillColor: [245, 248, 245] },
       margin: { left: margin, right: margin },

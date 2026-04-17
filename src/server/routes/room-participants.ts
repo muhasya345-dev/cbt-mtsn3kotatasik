@@ -39,19 +39,22 @@ roomParticipantsRouter.get("/", async (c) => {
         fullName: users.fullName,
         className: classes.name,
         seatNumber: roomAssignments.seatNumber,
+        participantNumber: roomAssignments.participantNumber,
       })
       .from(roomAssignments)
       .innerJoin(students, eq(roomAssignments.studentId, students.id))
       .innerJoin(users, eq(students.userId, users.id))
       .innerJoin(classes, eq(students.classId, classes.id))
       .where(eq(roomAssignments.roomId, room.id))
-      .orderBy(classes.name, users.fullName);
+      .orderBy(roomAssignments.seatNumber);
 
     result.push({
       roomId: room.id,
       roomName: room.name,
       capacity: room.capacity,
       participants: participants.map((p) => ({
+        participantNumber: p.participantNumber,
+        seatNumber: p.seatNumber,
         nis: p.nis,
         nisn: p.nisn ?? "-",
         fullName: p.fullName,

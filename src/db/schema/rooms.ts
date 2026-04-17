@@ -7,6 +7,12 @@ export const rooms = sqliteTable("rooms", {
   name: text("name").notNull(),
   capacity: integer("capacity").notNull(),
   examEventId: text("exam_event_id").notNull().references(() => examEvents.id),
+  // Kapasitas per meja (1 = lab komputer individu, 2 = default, dst.)
+  tableCapacity: integer("table_capacity").notNull().default(2),
+  // Jika true, sistem akan menolak 2 siswa dari grade_level yang sama di meja yang sama.
+  mixGrades: integer("mix_grades", { mode: "boolean" }).notNull().default(true),
+  // "class-order" (urut kelas, selang-seling angkatan) | "shuffle" (acak)
+  sortMode: text("sort_mode").notNull().default("class-order"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 

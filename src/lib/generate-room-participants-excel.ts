@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx";
 
 export interface RoomParticipant {
+  participantNumber?: string;
   nis: string;
   nisn: string;
   fullName: string;
@@ -25,7 +26,12 @@ export interface RoomParticipantsExcelInput {
  */
 export function generateRoomParticipantsExcel(data: RoomParticipantsExcelInput) {
   const wb = XLSX.utils.book_new();
-  const semesterLabel = data.semester === "ganjil" ? "Ganjil" : "Genap";
+  const showSemester = data.semester && data.semester !== "none";
+  const semesterLabel =
+    data.semester === "ganjil" ? "Ganjil" : data.semester === "genap" ? "Genap" : "";
+  const subtitle = showSemester
+    ? `Tahun Pelajaran ${data.academicYear} — Semester ${semesterLabel}`
+    : `Tahun Pelajaran ${data.academicYear}`;
 
   for (const room of data.rooms) {
     const aoa: (string | number)[][] = [
@@ -36,36 +42,44 @@ export function generateRoomParticipantsExcel(data: RoomParticipantsExcelInput) 
       ["Web: www.mtsn3kotatasikmalaya.sch.id  |  Email: mtsn.nagarakasih@gmail.com"],
       [],
       [`DAFTAR PESERTA ${data.examEventName.toUpperCase()}`],
-      [`Tahun Pelajaran ${data.academicYear} — Semester ${semesterLabel}`],
+      [subtitle],
       [`Ruang: ${room.roomName}`],
       [`Jumlah Peserta: ${room.participants.length}`],
       [],
-      ["No.", "NIS", "NISN", "Nama Lengkap", "Kelas"],
+      ["No.", "No. Peserta", "NIS", "NISN", "Nama Lengkap", "Kelas"],
     ];
 
     room.participants.forEach((p, idx) => {
-      aoa.push([idx + 1, p.nis, p.nisn || "-", p.fullName, p.className]);
+      aoa.push([
+        idx + 1,
+        p.participantNumber || "-",
+        p.nis,
+        p.nisn || "-",
+        p.fullName,
+        p.className,
+      ]);
     });
 
     const ws = XLSX.utils.aoa_to_sheet(aoa);
 
-    // Merge header + title rows across columns A:E
+    // Merge header + title rows across columns A:F (6 kolom sekarang)
     ws["!merges"] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },
-      { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } },
-      { s: { r: 2, c: 0 }, e: { r: 2, c: 4 } },
-      { s: { r: 3, c: 0 }, e: { r: 3, c: 4 } },
-      { s: { r: 4, c: 0 }, e: { r: 4, c: 4 } },
-      { s: { r: 6, c: 0 }, e: { r: 6, c: 4 } },
-      { s: { r: 7, c: 0 }, e: { r: 7, c: 4 } },
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
+      { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } },
+      { s: { r: 2, c: 0 }, e: { r: 2, c: 5 } },
+      { s: { r: 3, c: 0 }, e: { r: 3, c: 5 } },
+      { s: { r: 4, c: 0 }, e: { r: 4, c: 5 } },
+      { s: { r: 6, c: 0 }, e: { r: 6, c: 5 } },
+      { s: { r: 7, c: 0 }, e: { r: 7, c: 5 } },
     ];
 
     // Column widths
     ws["!cols"] = [
       { wch: 6 },   // No.
-      { wch: 15 },  // NIS
-      { wch: 15 },  // NISN
-      { wch: 38 },  // Nama Lengkap
+      { wch: 18 },  // No. Peserta
+      { wch: 13 },  // NIS
+      { wch: 13 },  // NISN
+      { wch: 36 },  // Nama Lengkap
       { wch: 10 },  // Kelas
     ];
 
@@ -79,8 +93,8 @@ export function generateRoomParticipantsExcel(data: RoomParticipantsExcelInput) 
       };
     }
 
-    // Table header row (index 11) styling
-    for (let c = 0; c <= 4; c++) {
+    // Table header row (index 11) styling — 6 kolom
+    for (let c = 0; c <= 5; c++) {
       const cell = ws[XLSX.utils.encode_cell({ r: 11, c })];
       if (!cell) continue;
       cell.s = {

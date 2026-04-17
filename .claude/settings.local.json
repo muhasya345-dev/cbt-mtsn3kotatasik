@@ -28,7 +28,11 @@
       "Bash(curl -sI https://cbt-mtsn3kotatasik.pages.dev/favicon.svg)",
       "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/favicon.svg)",
       "Bash(rm -f src/app/icon.svg)",
-      "Bash(rm -rf .next out)"
+      "Bash(rm -rf .next out)",
+      "Bash(ls drizzle/)",
+      "Bash(cat drizzle.config.ts)",
+      "Bash(npx drizzle-kit *)",
+      "Bash(npx shadcn@latest add checkbox switch --yes --overwrite)"
     ]
   }
 }
