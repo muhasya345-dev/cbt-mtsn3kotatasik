@@ -21,9 +21,10 @@ export const metadata: Metadata = {
     "Sistem Ujian Berbasis Komputer (CBT) MTsN 3 Kota Tasikmalaya — Kementerian Agama Republik Indonesia",
   icons: {
     icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/logo-kemenag.png", type: "image/png" },
     ],
-    shortcut: "/logo-kemenag.png",
+    shortcut: "/favicon.svg",
     apple: "/logo-kemenag.png",
   },
 };
