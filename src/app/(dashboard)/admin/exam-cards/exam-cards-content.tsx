@@ -49,7 +49,7 @@ export function ExamCardsContent() {
       try {
         const res = await fetch("/api/exam-events");
         const data = await res.json() as Record<string, unknown>;
-        setExamEvents((data.examEvents || data) as SelectOption[]);
+        setExamEvents((data.events || []) as SelectOption[]);
       } catch {
         toast.error("Gagal memuat event");
       }

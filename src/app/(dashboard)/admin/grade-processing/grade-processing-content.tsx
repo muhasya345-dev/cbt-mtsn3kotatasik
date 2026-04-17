@@ -47,9 +47,9 @@ export function GradeProcessingContent() {
           fetch("/api/exam-events"), fetch("/api/subjects"), fetch("/api/classes"),
         ]);
         const [evData, sData, cData] = await Promise.all([evRes.json(), sRes.json(), cRes.json()]) as [Record<string, unknown>, Record<string, unknown>, Record<string, unknown>];
-        setExamEvents(((evData.examEvents || evData) as SelectOption[]));
-        setSubjects(((sData.subjects || sData) as SelectOption[]));
-        setClasses(((cData.classes || cData) as SelectOption[]));
+        setExamEvents(((evData.events || []) as SelectOption[]));
+        setSubjects(((sData.subjects || []) as SelectOption[]));
+        setClasses(((cData.classes || []) as SelectOption[]));
       } catch {
         toast.error("Gagal memuat data");
       }

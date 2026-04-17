@@ -58,7 +58,7 @@ export function StudentsPageContent() {
       const sData = await sRes.json() as { students: StudentData[] };
       const cData = await cRes.json() as Record<string, unknown>;
       setStudents(sData.students || []);
-      setClasses(((cData.classes || cData) as ClassOption[]));
+      setClasses(((cData.classes || []) as ClassOption[]));
     } catch {
       toast.error("Gagal memuat data siswa");
     }

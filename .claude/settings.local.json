@@ -19,7 +19,12 @@
       "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/api/auth/me)",
       "Bash(curl -s -X POST https://cbt-mtsn3kotatasik.pages.dev/api/auth/seed)",
       "Bash(gh run *)",
-      "Bash(curl -s \"https://api.github.com/repos/muhasya345-dev/cbt-mtsn3kotatasik/actions/runs?per_page=3\")"
+      "Bash(curl -s \"https://api.github.com/repos/muhasya345-dev/cbt-mtsn3kotatasik/actions/runs?per_page=3\")",
+      "Bash(curl -sI https://cbt-mtsn3kotatasik.pages.dev/admin/grade-recap)",
+      "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/admin/grade-recap.html)",
+      "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/exam-events)",
+      "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/subjects)",
+      "Bash(curl -s -b \"cbt_session=9c9876ad-cabe-4be7-9db0-9aeb3e01a2a9\" https://cbt-mtsn3kotatasik.pages.dev/api/classes)"
     ]
   }
 }
