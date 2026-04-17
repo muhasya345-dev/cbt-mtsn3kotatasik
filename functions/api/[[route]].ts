@@ -20,6 +20,7 @@ import { gradeRecapRouter } from "@/server/routes/grade-recap";
 import { gradeProcessingRouter } from "@/server/routes/grade-processing";
 import { essayGradingRouter } from "@/server/routes/essay-grading";
 import { examCardsRouter } from "@/server/routes/exam-cards";
+import { roomParticipantsRouter } from "@/server/routes/room-participants";
 import { dashboardStatsRouter } from "@/server/routes/dashboard-stats";
 
 const app = new Hono<Env>().basePath("/api");
@@ -49,6 +50,7 @@ app.route("/grade-recap", gradeRecapRouter);
 app.route("/grade-processing", gradeProcessingRouter);
 app.route("/essay-grading", essayGradingRouter);
 app.route("/exam-cards", examCardsRouter);
+app.route("/room-participants", roomParticipantsRouter);
 app.route("/dashboard-stats", dashboardStatsRouter);
 
 app.onError((err, c) => {
