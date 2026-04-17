@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { CreditCard, Printer, Users, FileText } from "lucide-react";
 import { generateExamCardPdf } from "@/lib/generate-exam-card-pdf";
+import { formatEventLabel } from "@/lib/format-event";
 
 interface SelectOption { id: string; name: string; semester?: string; academicYear?: string }
 
@@ -128,7 +129,7 @@ export function ExamCardsContent() {
                   <SelectTrigger><SelectValue placeholder="Pilih event" /></SelectTrigger>
                   <SelectContent>
                     {examEvents.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
+                      <SelectItem key={e.id} value={e.id}>{formatEventLabel(e)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

@@ -11,8 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Calculator, Save, Search, TrendingUp } from "lucide-react";
+import { formatEventLabel } from "@/lib/format-event";
 
-interface SelectOption { id: string; name: string }
+interface SelectOption { id: string; name: string; semester?: string; academicYear?: string }
 
 interface GradeRow {
   studentId: string;
@@ -186,7 +187,7 @@ export function GradeProcessingContent() {
                   <SelectTrigger><SelectValue placeholder="Pilih event" /></SelectTrigger>
                   <SelectContent>
                     {examEvents.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
+                      <SelectItem key={e.id} value={e.id}>{formatEventLabel(e)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

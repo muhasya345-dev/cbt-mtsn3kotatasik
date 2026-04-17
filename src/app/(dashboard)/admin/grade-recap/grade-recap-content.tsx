@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { BarChart3, Search, Download, AlertCircle, CheckCircle2 } from "lucide-react";
+import { formatEventLabel } from "@/lib/format-event";
 
-interface SelectOption { id: string; name: string }
+interface SelectOption { id: string; name: string; semester?: string; academicYear?: string }
 
 interface SessionScore {
   sessionId: string;
@@ -130,7 +131,7 @@ export function GradeRecapContent() {
                   <SelectTrigger><SelectValue placeholder="Pilih event" /></SelectTrigger>
                   <SelectContent>
                     {examEvents.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
+                      <SelectItem key={e.id} value={e.id}>{formatEventLabel(e)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

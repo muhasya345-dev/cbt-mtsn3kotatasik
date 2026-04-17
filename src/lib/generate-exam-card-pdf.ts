@@ -59,7 +59,8 @@ export async function generateExamCardPdf(
     }
   }
 
-  const semesterLabel = config.semester === "ganjil" ? "GANJIL" : "GENAP";
+  const hasSemester = config.semester === "ganjil" || config.semester === "genap";
+  const semesterLabel = config.semester === "ganjil" ? "GANJIL" : config.semester === "genap" ? "GENAP" : "";
 
   // Detect short exam name (e.g., "ASAS", "PAS", "PTS", "PAT")
   function getShortExamName(name: string): string {
@@ -132,15 +133,18 @@ export async function generateExamCardPdf(
     doc.setTextColor(0, 0, 0);
     doc.text(shortName, rightBlockX + rightBlockW / 2, rightBlockY + 6.5, { align: "center" });
 
-    // Semester
-    doc.setFontSize(5.5);
-    doc.setFont("helvetica", "bold");
-    doc.text(`SMT. ${semesterLabel}`, rightBlockX + rightBlockW / 2, rightBlockY + 10.5, { align: "center" });
+    // Semester (only if ganjil/genap)
+    if (hasSemester) {
+      doc.setFontSize(5.5);
+      doc.setFont("helvetica", "bold");
+      doc.text(`SMT. ${semesterLabel}`, rightBlockX + rightBlockW / 2, rightBlockY + 10.5, { align: "center" });
+    }
 
     // Academic year
     doc.setFontSize(5.5);
     doc.setFont("helvetica", "normal");
-    doc.text(`T. A. ${config.academicYear.replace("/", "-")}`, rightBlockX + rightBlockW / 2, rightBlockY + 13.5, { align: "center" });
+    const ayY = hasSemester ? rightBlockY + 13.5 : rightBlockY + 11.5;
+    doc.text(`T. A. ${config.academicYear.replace("/", "-")}`, rightBlockX + rightBlockW / 2, ayY, { align: "center" });
     doc.setTextColor(0, 0, 0);
 
     // ===== BODY SECTION =====

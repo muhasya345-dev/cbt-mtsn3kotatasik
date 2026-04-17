@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { FadeIn } from "@/components/shared/motion-wrapper";
 import { toast } from "sonner";
 import { Plus, Trash2, Power, Copy, RefreshCw } from "lucide-react";
+import { formatEventLabel } from "@/lib/format-event";
 
 interface ScheduleData {
   id: string;
@@ -28,7 +29,7 @@ interface ScheduleData {
   isActive: boolean;
 }
 
-interface SelectOption { id: string; name: string; code?: string; fullName?: string }
+interface SelectOption { id: string; name: string; code?: string; fullName?: string; semester?: string; academicYear?: string }
 
 const TOKEN_REGENERATE_INTERVAL = 20 * 60 * 1000; // 20 menit
 
@@ -294,7 +295,7 @@ export function SchedulesPageContent() {
               <Label>Event Ujian</Label>
               <Select value={form.examEventId} onValueChange={(v) => setForm({ ...form, examEventId: v ?? "" })}>
                 <SelectTrigger><SelectValue placeholder="Pilih event" /></SelectTrigger>
-                <SelectContent>{examEvents.map((e) => <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>)}</SelectContent>
+                <SelectContent>{examEvents.map((e) => <SelectItem key={e.id} value={e.id}>{formatEventLabel(e)}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="grid grid-cols-2 gap-3">

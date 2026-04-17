@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { FadeIn } from "@/components/shared/motion-wrapper";
 import { toast } from "sonner";
 import { Plus, Trash2, CheckCircle, PenTool } from "lucide-react";
+import { formatEventLabel } from "@/lib/format-event";
 
 interface AssignmentData {
   id: string;
@@ -35,6 +36,8 @@ interface SelectOption {
   fullName?: string;
   code?: string;
   gradeLevel?: number;
+  semester?: string;
+  academicYear?: string;
 }
 
 const statusBadge: Record<string, string> = {
@@ -201,7 +204,7 @@ export function AssignmentsPageContent() {
                 <SelectTrigger><SelectValue placeholder="Pilih event ujian" /></SelectTrigger>
                 <SelectContent>
                   {examEvents.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>{e.name}</SelectItem>
+                    <SelectItem key={e.id} value={e.id}>{formatEventLabel(e)}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
