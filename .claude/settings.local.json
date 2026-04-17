@@ -17,7 +17,9 @@
       "Bash(echo \"Exit: $?\")",
       "Bash(npx wrangler *)",
       "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/api/auth/me)",
-      "Bash(curl -s -X POST https://cbt-mtsn3kotatasik.pages.dev/api/auth/seed)"
+      "Bash(curl -s -X POST https://cbt-mtsn3kotatasik.pages.dev/api/auth/seed)",
+      "Bash(gh run *)",
+      "Bash(curl -s \"https://api.github.com/repos/muhasya345-dev/cbt-mtsn3kotatasik/actions/runs?per_page=3\")"
     ]
   }
 }
