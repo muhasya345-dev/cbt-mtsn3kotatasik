@@ -16,15 +16,16 @@ export function semesterLabel(semester: string | null | undefined): string {
 }
 
 /**
+ * Format ringkas untuk label selector. Pakai tanda kurung supaya lebih rapat.
  * Contoh:
- *   - "UAS — TP 2025/2026 · Semester Ganjil"
- *   - "Try Out — TP 2025/2026" (kalau semester="none")
+ *   - "Asesmen Sumatif (Genap 2025/2026)"
+ *   - "Try Out (2025/2026)" (kalau semester="none")
  */
 export function formatEventLabel(event: EventLike): string {
-  const ay = event.academicYear ? `TP ${event.academicYear}` : "";
+  const ay = event.academicYear ?? "";
   const sem = semesterLabel(event.semester);
-  const meta = [ay, sem ? `Semester ${sem}` : ""].filter(Boolean).join(" · ");
-  return meta ? `${event.name} — ${meta}` : event.name;
+  const meta = [sem, ay].filter(Boolean).join(" ");
+  return meta ? `${event.name} (${meta})` : event.name;
 }
 
 /**
