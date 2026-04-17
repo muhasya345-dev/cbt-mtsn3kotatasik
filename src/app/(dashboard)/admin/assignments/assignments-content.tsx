@@ -157,7 +157,7 @@ export function AssignmentsPageContent() {
       id: "actions", header: "Aksi",
       cell: ({ row }) => (
         <div className="flex gap-1">
-          <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => router.push(`/admin/assignments/${row.original.id}/questions`)} title="Kelola Soal">
+          <Button size="sm" variant="ghost" className="text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => router.push(`/admin/assignments/questions?id=${row.original.id}`)} title="Kelola Soal">
             <PenTool size={16} />
           </Button>
           {row.original.status === "submitted" && (

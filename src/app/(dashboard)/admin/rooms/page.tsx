@@ -1,7 +1,5 @@
-import { requireRole } from "@/lib/auth";
 import { RoomsPageContent } from "./rooms-content";
 
-export default async function RoomsPage() {
-  await requireRole("admin");
+export default function RoomsPage() {
   return <RoomsPageContent />;
 }

@@ -1,7 +1,5 @@
-import { requireRole } from "@/lib/auth";
 import { MonitoringPageContent } from "./monitoring-content";
 
-export default async function MonitoringPage() {
-  await requireRole("admin");
+export default function MonitoringPage() {
   return <MonitoringPageContent />;
 }

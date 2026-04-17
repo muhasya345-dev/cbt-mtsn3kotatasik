@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Workers
+name: Deploy to Cloudflare Pages
 
 on:
   push:
@@ -18,11 +18,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build:cloudflare
+      - name: Build (Next.js static export)
+        run: npx next build
 
-      - name: Deploy
-        run: npx wrangler deploy
+      - name: Deploy to Cloudflare Pages
+        run: npx wrangler pages deploy out --project-name=cbt-mtsn3kotatasik --branch=main --commit-dirty=true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

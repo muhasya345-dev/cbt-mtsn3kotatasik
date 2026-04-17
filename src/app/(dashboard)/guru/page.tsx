@@ -1,8 +1,10 @@
-import { requireRole } from "@/lib/auth";
+"use client";
+
+import { useAuth } from "@/lib/auth-client";
 import { FadeIn } from "@/components/shared/motion-wrapper";
 
-export default async function GuruDashboardPage() {
-  const session = await requireRole("guru");
+export default function GuruDashboardPage() {
+  const { session } = useAuth();
 
   return (
     <div className="space-y-6">

@@ -1,7 +1,5 @@
-import { requireRole } from "@/lib/auth";
 import { QuestionsPageContent } from "./questions-content";
 
-export default async function QuestionsPage() {
-  await requireRole("guru");
+export default function QuestionsPage() {
   return <QuestionsPageContent />;
 }

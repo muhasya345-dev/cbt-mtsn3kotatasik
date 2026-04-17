@@ -1,7 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npm uninstall *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies.hono\\)\")",
+      "Bash(rm -rf src/app/api src/middleware.ts)",
+      "Read(//c/c/Users/muhas/Downloads/CBT MTsN 3 Kota Tasikmalaya/src/**)",
+      "Bash(mkdir -p \"src/app/\\(dashboard\\)/admin/assignments/questions\")",
+      "Bash(mv \"src/app/\\(dashboard\\)/admin/assignments/[id]/questions/questions-content.tsx\" \"src/app/\\(dashboard\\)/admin/assignments/questions/questions-content.tsx\")",
+      "Bash(rm -rf \"src/app/\\(dashboard\\)/admin/assignments/[id]\")",
+      "Bash(npx next *)",
+      "Bash(rm -f open-next.config.ts)",
+      "Read(//c/c/Users/muhas/Downloads/CBT MTsN 3 Kota Tasikmalaya/**)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(npx wrangler *)",
+      "Bash(curl -s https://cbt-mtsn3kotatasik.pages.dev/api/auth/me)",
+      "Bash(curl -s -X POST https://cbt-mtsn3kotatasik.pages.dev/api/auth/seed)"
     ]
   }
 }

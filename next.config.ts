@@ -1,11 +1,13 @@
 import type { NextConfig } from "next";
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-
-initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
+  output: "export",
   reactCompiler: true,
-  serverExternalPackages: ["@opennextjs/cloudflare"],
+  images: {
+    unoptimized: true,
+  },
+  // Static export doesn't support trailing slash redirects for API — we use Pages Functions for API
+  trailingSlash: false,
 };
 
 export default nextConfig;
