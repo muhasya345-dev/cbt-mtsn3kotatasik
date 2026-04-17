@@ -36,6 +36,7 @@ import {
   Settings,
   Shuffle,
   Sparkles,
+  Info,
 } from "lucide-react";
 import {
   generateRoomParticipantsPdf,
@@ -95,8 +96,6 @@ export function RoomsPageContent() {
     name: "",
     capacity: "30",
     examEventId: "",
-    tableCapacity: 2,
-    mixGrades: true,
   });
   const [examEvents, setExamEvents] = useState<ExamEventOption[]>([]);
 
@@ -147,8 +146,6 @@ export function RoomsPageContent() {
       name: "",
       capacity: "30",
       examEventId: "",
-      tableCapacity: 2,
-      mixGrades: true,
     });
     setDialogOpen(true);
   }
@@ -159,8 +156,6 @@ export function RoomsPageContent() {
       name: room.name,
       capacity: String(room.capacity),
       examEventId: room.examEventId,
-      tableCapacity: room.tableCapacity,
-      mixGrades: room.mixGrades,
     });
     setDialogOpen(true);
   }
@@ -173,8 +168,6 @@ export function RoomsPageContent() {
       const payload: Record<string, unknown> = {
         name: form.name,
         capacity: parseInt(form.capacity),
-        tableCapacity: form.tableCapacity,
-        mixGrades: form.mixGrades,
       };
       if (!editing) payload.examEventId = form.examEventId;
       const res = await fetch(url, {
@@ -568,49 +561,27 @@ export function RoomsPageContent() {
                 Gunakan angka di nama (misal &quot;Ruang 1&quot;) — sistem ambil untuk kode ruang (01).
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Kapasitas (siswa)</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={form.capacity}
-                  onChange={(e) => setForm({ ...form, capacity: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Kursi per Meja</Label>
-                <Select
-                  value={String(form.tableCapacity)}
-                  onValueChange={(v) =>
-                    setForm({ ...form, tableCapacity: parseInt(v || "2") })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 kursi (lab individu)</SelectItem>
-                    <SelectItem value="2">2 kursi (default)</SelectItem>
-                    <SelectItem value="3">3 kursi</SelectItem>
-                    <SelectItem value="4">4 kursi</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <label className="flex items-center justify-between rounded-lg border p-3 cursor-pointer">
-              <div>
-                <p className="text-sm font-medium">Beda angkatan per meja</p>
-                <p className="text-xs text-muted-foreground">
-                  Satu meja tidak boleh berisi siswa dengan grade yang sama
-                </p>
-              </div>
-              <Switch
-                checked={form.mixGrades}
-                onCheckedChange={(v) => setForm({ ...form, mixGrades: v })}
+            <div className="space-y-2">
+              <Label>Kapasitas (siswa)</Label>
+              <Input
+                type="number"
+                min="1"
+                value={form.capacity}
+                onChange={(e) => setForm({ ...form, capacity: e.target.value })}
+                required
               />
-            </label>
+              <p className="text-xs text-muted-foreground">
+                Jumlah total kursi/siswa yang muat di ruangan ini.
+              </p>
+            </div>
+            <div className="flex gap-2 rounded-lg border border-amber-200 bg-amber-50/60 p-3 text-xs text-amber-900">
+              <Info size={14} className="mt-0.5 flex-shrink-0" />
+              <p>
+                <b>Aturan penempatan</b> (kursi per meja, beda angkatan, mode urut) diatur di tombol{" "}
+                <b>Atur &amp; Generate Penempatan</b> — berlaku untuk semua ruangan dalam satu
+                event ujian sekaligus.
+              </p>
+            </div>
             {!editing && (
               <div className="space-y-2">
                 <Label>Event Ujian</Label>
